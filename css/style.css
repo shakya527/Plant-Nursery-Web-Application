@@ -1,0 +1,1048 @@
+/* =============================================================================
+   PROJECT   : GreenThumb - Rubber Plant Nursery Web Application
+   FILE      : css/style.css
+   PURPOSE   : Global design system — tokens, utilities, and component styles
+               shared across every page in the application.
+               All auth pages (login, register) and main layout pages
+               (via header.php / footer.php) import this single stylesheet.
+   OBJECTIVE : Obj 4 – Responsive UI using HTML/CSS for a professional,
+               accessible experience on all screen sizes.
+   ============================================================================= */
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SECTION 1: Google Fonts Import
+   Outfit — modern geometric sans-serif for headings
+   Inter  — clean, highly legible for body text and form labels
+   ───────────────────────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SECTION 2: CSS Custom Properties (Design Tokens)
+   Centralised colour palette, spacing, shadows, and transitions.
+   Changing a token here updates the entire UI consistently.
+   ───────────────────────────────────────────────────────────────────────────── */
+:root {
+    /* ── Colour Palette ─────────────────────────────────────── */
+    --clr-bg-deepest:   #060e06;          /* Page background — deepest forest */
+    --clr-bg-dark:      #0d1a0d;          /* Section backgrounds */
+    --clr-bg-card:      #112211;          /* Card / panel backgrounds */
+    --clr-bg-elevated:  #172917;          /* Elevated surfaces (dropdowns, modals) */
+
+    --clr-primary:      #4ade80;          /* Vibrant lime-green — CTAs, highlights */
+    --clr-primary-dark: #22c55e;          /* Hover state of primary */
+    --clr-primary-glow: rgba(74, 222, 128, 0.25); /* Glow effect for focus rings */
+    --clr-secondary:    #86efac;          /* Softer green for secondary text */
+    --clr-accent:       #bbf7d0;          /* Lightest green — badges, accents */
+
+    --clr-danger:       #f87171;          /* Error / delete / out-of-stock */
+    --clr-danger-bg:    rgba(248, 113, 113, 0.1);
+    --clr-warning:      #fbbf24;          /* Low-stock warnings */
+    --clr-warning-bg:   rgba(251, 191, 36, 0.1);
+    --clr-success:      #4ade80;          /* Success states */
+    --clr-success-bg:   rgba(74, 222, 128, 0.1);
+    --clr-info:         #60a5fa;          /* Informational badges */
+    --clr-info-bg:      rgba(96, 165, 250, 0.1);
+
+    /* ── Text Colours ───────────────────────────────────────── */
+    --clr-text-primary: #f0fdf4;          /* Primary body text on dark bg */
+    --clr-text-muted:   #6b9a6b;          /* Muted / placeholder text */
+    --clr-text-link:    #4ade80;          /* Hyperlink colour */
+
+    /* ── Borders & Dividers ─────────────────────────────────── */
+    --clr-border:       rgba(74, 222, 128, 0.15); /* Subtle green-tinted borders */
+    --clr-border-focus: rgba(74, 222, 128, 0.6);  /* Focus / active border */
+
+    /* ── Glassmorphism ──────────────────────────────────────── */
+    --glass-bg:         rgba(17, 34, 17, 0.75);
+    --glass-blur:       blur(18px);
+    --glass-border:     1px solid rgba(74, 222, 128, 0.12);
+
+    /* ── Typography ─────────────────────────────────────────── */
+    --font-heading: 'Outfit', sans-serif;
+    --font-body:    'Inter',  sans-serif;
+
+    /* ── Spacing Scale ──────────────────────────────────────── */
+    --space-xs:  4px;
+    --space-sm:  8px;
+    --space-md:  16px;
+    --space-lg:  24px;
+    --space-xl:  40px;
+    --space-2xl: 64px;
+
+    /* ── Border Radius ──────────────────────────────────────── */
+    --radius-sm:  6px;
+    --radius-md:  12px;
+    --radius-lg:  20px;
+    --radius-xl:  32px;
+    --radius-pill: 999px;
+
+    /* ── Shadows ─────────────────────────────────────────────── */
+    --shadow-sm:  0 1px 4px rgba(0,0,0,0.4);
+    --shadow-md:  0 4px 20px rgba(0,0,0,0.5);
+    --shadow-lg:  0 12px 48px rgba(0,0,0,0.6);
+    --shadow-glow: 0 0 32px rgba(74, 222, 128, 0.18);
+
+    /* ── Transitions ─────────────────────────────────────────── */
+    --transition-fast:   all 0.15s ease;
+    --transition-normal: all 0.25s ease;
+    --transition-slow:   all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* ── Navbar Height (used for content offset) ─────────────── */
+    --navbar-h: 70px;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SECTION 3: CSS Reset & Base Styles
+   ───────────────────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--clr-bg-deepest);
+    color: var(--clr-text-primary);
+    font-size: 15px;
+    line-height: 1.65;
+    min-height: 100vh;
+    /* Subtle animated gradient background for premium feel */
+    background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(34, 197, 94, 0.04) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(74, 222, 128, 0.03) 0%, transparent 50%);
+}
+
+img { max-width: 100%; display: block; }
+a  { color: var(--clr-text-link); text-decoration: none; transition: var(--transition-fast); }
+a:hover { color: var(--clr-accent); }
+ul, ol { list-style: none; }
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SECTION 4: Typography Scale
+   ───────────────────────────────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--clr-text-primary);
+}
+h1 { font-size: clamp(2rem,   5vw, 3.2rem); }
+h2 { font-size: clamp(1.5rem, 4vw, 2.2rem); }
+h3 { font-size: clamp(1.2rem, 3vw, 1.6rem); }
+h4 { font-size: 1.15rem; }
+p  { color: var(--clr-text-muted); }
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SECTION 5: Layout Utilities
+   ───────────────────────────────────────────────────────────────────────────── */
+.container {
+    width: min(1200px, calc(100% - 48px));
+    margin-inline: auto;
+}
+
+.page-wrapper {
+    /* Pushes content below the fixed navbar */
+    padding-top: calc(var(--navbar-h) + var(--space-xl));
+    padding-bottom: var(--space-2xl);
+    min-height: 100vh;
+}
+
+.flex         { display: flex; }
+.flex-col     { display: flex; flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-sm  { gap: var(--space-sm); }
+.gap-md  { gap: var(--space-md); }
+.gap-lg  { gap: var(--space-lg); }
+
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-lg); }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-lg); }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-lg); }
+
+.text-center { text-align: center; }
+.text-right  { text-align: right; }
+
+.sr-only {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SECTION 6: Navbar (rendered by components/header.php)
+   Obj 4 – Responsive UI; role-based links shown via PHP conditional logic
+   ───────────────────────────────────────────────────────────────────────────── */
+.navbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--navbar-h);
+    z-index: 1000;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-bottom: var(--glass-border);
+    display: flex;
+    align-items: center;
+}
+
+.navbar .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+/* Brand / Logo */
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--clr-primary);
+    letter-spacing: -0.5px;
+}
+
+.navbar-brand .brand-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--clr-primary), var(--clr-primary-dark));
+    border-radius: var(--radius-sm);
+    display: grid; place-items: center;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 14px rgba(74, 222, 128, 0.4);
+}
+
+.navbar-brand:hover { color: var(--clr-accent); }
+
+/* Nav links container */
+.navbar-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+/* Individual nav link */
+.nav-link {
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--clr-text-muted);
+    transition: var(--transition-fast);
+    white-space: nowrap;
+}
+.nav-link:hover, .nav-link.active {
+    color: var(--clr-primary);
+    background: rgba(74, 222, 128, 0.08);
+}
+
+/* Role badge in nav */
+.role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.role-badge.farmer   { background: rgba(251,191,36,0.15); color: #fbbf24; }
+.role-badge.customer { background: rgba(96,165,250,0.15); color: #60a5fa; }
+
+/* Logout / auth buttons in nav */
+.nav-btn {
+    padding: 8px 18px;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: var(--transition-normal);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.nav-btn-primary {
+    background: var(--clr-primary);
+    color: #0a160a;
+}
+.nav-btn-primary:hover {
+    background: var(--clr-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(222, 74, 195, 0.35);
+    color: #0a160a;
+}
+.nav-btn-ghost {
+    background: transparent;
+    color: var(--clr-text-muted);
+    border: 1px solid var(--clr-border);
+}
+.nav-btn-ghost:hover {
+    border-color: var(--clr-primary);
+    color: var(--clr-primary);
+    background: rgba(74, 222, 128, 0.05);
+}
+
+/* Hamburger (mobile) */
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--space-sm);
+}
+.nav-toggle span {
+    display: block;
+    width: 24px; height: 2px;
+    background: var(--clr-primary);
+    border-radius: 2px;
+    transition: var(--transition-fast);
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SECTION 7: Card Component
+   Used for plant catalog cards, dashboard stat cards, order cards
+   ───────────────────────────────────────────────────────────────────────────── */
+.card {
+    background: var(--clr-bg-card);
+    border: var(--glass-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: var(--transition-slow);
+    position: relative;
+}
+.card:hover {
+    transform: translateY(-4px);
+    border-color: var(--clr-border-focus);
+    box-shadow: var(--shadow-glow);
+}
+
+.card-body { padding: var(--space-lg); }
+
+.card-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    background: var(--clr-bg-elevated);
+}
+
+/* Plant card image placeholder when no image uploaded */
+.card-img-placeholder {
+    width: 100%; height: 220px;
+    background: linear-gradient(135deg, var(--clr-bg-elevated), var(--clr-bg-card));
+    display: grid; place-items: center;
+    font-size: 3.5rem;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SECTION 8: Form Components
+   Obj 4 – Secure forms; all inputs styled consistently
+   ───────────────────────────────────────────────────────────────────────────── */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-md);
+}
+
+.form-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--clr-secondary);
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--clr-border);
+    border-radius: var(--radius-md);
+    color: var(--clr-text-primary);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    transition: var(--transition-fast);
+    outline: none;
+}
+.form-control::placeholder { color: var(--clr-text-muted); opacity: 0.7; }
+.form-control:focus {
+    border-color: var(--clr-border-focus);
+    background: rgba(74, 222, 128, 0.04);
+    box-shadow: 0 0 0 3px var(--clr-primary-glow);
+}
+.form-control.is-invalid { border-color: var(--clr-danger); }
+.form-control.is-invalid:focus { box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.2); }
+
+select.form-control { cursor: pointer; }
+select.form-control option { background: var(--clr-bg-elevated); color: var(--clr-text-primary); }
+
+textarea.form-control { resize: vertical; min-height: 100px; }
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SECTION 9: Button Component
+   ───────────────────────────────────────────────────────────────────────────── */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 13px 28px;
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: var(--transition-normal);
+    text-decoration: none;
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+}
+.btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0);
+    transition: var(--transition-fast);
+}
+.btn:hover::after { background: rgba(255,255,255,0.06); }
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--clr-primary), var(--clr-primary-dark));
+    color: #071407;
+    box-shadow: 0 4px 20px rgba(222, 74, 190, 0.3);
+}
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(222, 74, 205, 0.45);
+    color: #071407;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--clr-primary);
+    border: 1px solid var(--clr-border-focus);
+}
+.btn-secondary:hover {
+    background: rgba(74, 222, 128, 0.08);
+    color: var(--clr-primary);
+}
+
+.btn-danger {
+    background: rgba(248, 113, 113, 0.15);
+    color: var(--clr-danger);
+    border: 1px solid rgba(248, 113, 113, 0.3);
+}
+.btn-danger:hover {
+    background: rgba(248, 113, 113, 0.25);
+    color: var(--clr-danger);
+}
+
+.btn-full { width: 100%; }
+.btn-sm   { padding: 8px 16px; font-size: 0.82rem; }
+.btn-lg   { padding: 16px 36px; font-size: 1.05rem; }
+
+/* Loading spinner inside button */
+.btn.loading { pointer-events: none; opacity: 0.75; }
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SECTION 10: Alert / Flash Message Component
+   Used to show success, error, warning messages from PHP $_GET params
+   ───────────────────────────────────────────────────────────────────────────── */
+.alert {
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: var(--space-md);
+    animation: alertSlideIn 0.3s ease;
+}
+@keyframes alertSlideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.alert-error   { background: var(--clr-danger-bg);  border: 1px solid rgba(248,113,113,0.3);  color: var(--clr-danger); }
+.alert-success { background: var(--clr-success-bg); border: 1px solid rgba(74,222,128,0.3);   color: var(--clr-primary); }
+.alert-warning { background: var(--clr-warning-bg); border: 1px solid rgba(251,191,36,0.3);   color: var(--clr-warning); }
+.alert-info    { background: var(--clr-info-bg);    border: 1px solid rgba(96,165,250,0.3);   color: var(--clr-info); }
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SECTION 11: Badge Component
+   Used for plant category labels, order status pills
+   ───────────────────────────────────────────────────────────────────────────── */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.badge-success  { background: var(--clr-success-bg); color: var(--clr-success); }
+.badge-danger   { background: var(--clr-danger-bg);  color: var(--clr-danger); }
+.badge-warning  { background: var(--clr-warning-bg); color: var(--clr-warning); }
+.badge-info     { background: var(--clr-info-bg);    color: var(--clr-info); }
+.badge-muted    { background: rgba(107,154,107,0.15); color: var(--clr-text-muted); }
+
+/* Order-status-specific badge colours */
+.badge-pending   { background: rgba(251,191,36,0.12); color: #fbbf24; }
+.badge-confirmed { background: rgba(96,165,250,0.12); color: #60a5fa; }
+.badge-shipped   { background: rgba(167,139,250,0.12); color: #a78bfa; }
+.badge-delivered { background: var(--clr-success-bg); color: var(--clr-success); }
+.badge-cancelled { background: var(--clr-danger-bg);  color: var(--clr-danger); }
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SECTION 12: Table Component
+   Used in farmer order management, income_report.php (Obj 5)
+   ───────────────────────────────────────────────────────────────────────────── */
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: var(--radius-lg);
+    border: var(--glass-border);
+}
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+.table thead {
+    background: var(--clr-bg-elevated);
+}
+.table th {
+    padding: 14px 18px;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--clr-text-muted);
+    border-bottom: var(--glass-border);
+    white-space: nowrap;
+}
+.table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(74, 222, 128, 0.06);
+    color: var(--clr-text-primary);
+    vertical-align: middle;
+}
+.table tbody tr { transition: var(--transition-fast); }
+.table tbody tr:hover { background: rgba(74, 222, 128, 0.04); }
+.table tbody tr:last-child td { border-bottom: none; }
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SECTION 13: Dashboard Stat Cards
+   Used on farmer dashboard (Obj 3) and income_report.php (Obj 5)
+   ───────────────────────────────────────────────────────────────────────────── */
+.stat-card {
+    background: var(--clr-bg-card);
+    border: var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    transition: var(--transition-slow);
+}
+.stat-card:hover {
+    border-color: var(--clr-border-focus);
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-2px);
+}
+.stat-icon {
+    width: 52px; height: 52px;
+    border-radius: var(--radius-md);
+    display: grid; place-items: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+.stat-icon.green  { background: rgba(222, 74, 153, 0.12); }
+.stat-icon.yellow { background: rgba(251,191,36,0.12); }
+.stat-icon.blue   { background: rgba(96,165,250,0.12); }
+.stat-icon.red    { background: rgba(248,113,113,0.12); }
+
+.stat-value {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--clr-primary);
+    line-height: 1;
+}
+.stat-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--clr-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SECTION 14: Footer (rendered by components/footer.php)
+   ───────────────────────────────────────────────────────────────────────────── */
+.site-footer {
+    background: var(--clr-bg-dark);
+    border-top: var(--glass-border);
+    padding: var(--space-2xl) 0 var(--space-lg);
+    margin-top: auto;
+}
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: var(--space-xl);
+    margin-bottom: var(--space-xl);
+}
+.footer-brand-text {
+    font-size: 0.9rem;
+    color: var(--clr-text-muted);
+    margin-top: var(--space-md);
+    max-width: 300px;
+}
+.footer-heading {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--clr-secondary);
+    margin-bottom: var(--space-md);
+}
+.footer-links li { margin-bottom: var(--space-sm); }
+.footer-links a  { color: var(--clr-text-muted); font-size: 0.88rem; }
+.footer-links a:hover { color: var(--clr-primary); }
+.footer-bottom {
+    border-top: var(--glass-border);
+    padding-top: var(--space-lg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    color: var(--clr-text-muted);
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SECTION 15: Auth Page Layout (login.html & register.html)
+   Full-screen split-panel layout for auth pages
+   ───────────────────────────────────────────────────────────────────────────── */
+.auth-page {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+/* Left decorative panel */
+.auth-hero {
+    position: relative;
+    background:
+        radial-gradient(ellipse at 30% 70%, rgba(74,222,128,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 20%, rgba(34,197,94,0.1) 0%, transparent 50%),
+        linear-gradient(160deg, #060e06 0%, #0d2010 50%, #071a07 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: var(--space-2xl);
+    overflow: hidden;
+}
+
+/* Floating leaf decorations */
+.auth-hero::before, .auth-hero::after {
+    content: '';
+    position: absolute;
+    border-radius: 50% 0 50% 0;
+    opacity: 0.07;
+}
+.auth-hero::before {
+    width: 500px; height: 500px;
+    background: var(--clr-primary);
+    top: -100px; left: -150px;
+    animation: floatLeaf 12s ease-in-out infinite;
+}
+.auth-hero::after {
+    width: 350px; height: 350px;
+    background: var(--clr-primary-dark);
+    bottom: -80px; right: -80px;
+    animation: floatLeaf 9s ease-in-out infinite reverse;
+}
+@keyframes floatLeaf {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    33%       { transform: rotate(8deg) scale(1.05); }
+    66%       { transform: rotate(-6deg) scale(0.97); }
+}
+
+.auth-hero-content { position: relative; z-index: 1; }
+
+.auth-hero-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-2xl);
+}
+.auth-hero-logo .logo-icon {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, var(--clr-primary), var(--clr-primary-dark));
+    border-radius: var(--radius-md);
+    display: grid; place-items: center;
+    font-size: 1.4rem;
+    box-shadow: 0 6px 24px rgba(74, 222, 128, 0.4);
+}
+.auth-hero-logo .logo-text {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--clr-primary);
+}
+
+.auth-hero-tagline {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    color: var(--clr-text-primary);
+    line-height: 1.15;
+    margin-bottom: var(--space-lg);
+}
+.auth-hero-tagline span { color: var(--clr-primary); }
+
+.auth-hero-desc {
+    font-size: 1rem;
+    color: var(--clr-text-muted);
+    max-width: 380px;
+    line-height: 1.7;
+    margin-bottom: var(--space-xl);
+}
+
+/* Feature pill list on auth hero */
+.auth-features {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+.auth-feature-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: var(--clr-secondary);
+}
+.auth-feature-item::before {
+    content: '✦';
+    color: var(--clr-primary);
+    font-size: 0.7rem;
+}
+
+/* Right form panel */
+.auth-form-panel {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: var(--space-2xl) var(--space-xl);
+    overflow-y: auto;
+}
+
+.auth-form-box {
+    width: 100%;
+    max-width: 460px;
+}
+
+.auth-form-title {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--clr-text-primary);
+    margin-bottom: var(--space-xs);
+}
+.auth-form-subtitle {
+    font-size: 0.9rem;
+    color: var(--clr-text-muted);
+    margin-bottom: var(--space-xl);
+}
+.auth-form-subtitle a {
+    color: var(--clr-primary);
+    font-weight: 600;+
+}
+.auth-divider {
+    height: 1px;
+    background: var(--clr-border);
+    margin: var(--space-lg) 0;
+}
+
+/* Password visibility toggle button */
+.input-group { position: relative; }
+.input-group .form-control { padding-right: 48px; }
+.input-group-btn {
+    position: absolute;
+    right: 14px; top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--clr-text-muted);
+    font-size: 1rem;
+    transition: var(--transition-fast);
+}
+.input-group-btn:hover { color: var(--clr-primary); }
+
+/* Role selector cards (on registration page) */
+.role-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+.role-option { display: none; }
+.role-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    border: 2px solid var(--clr-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition-normal);
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--clr-text-muted);
+}
+.role-label .role-icon { font-size: 2rem; }
+.role-option:checked + .role-label {
+    border-color: var(--clr-primary);
+    background: rgba(74, 222, 128, 0.07);
+    color: var(--clr-primary);
+}
+.role-label:hover {
+    border-color: var(--clr-border-focus);
+    color: var(--clr-secondary);
+}
+
+/* Field error message */
+.field-error {
+    font-size: 0.78rem;
+    color: var(--clr-danger);
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SECTION 16: Page Header / Hero for inner pages
+   ───────────────────────────────────────────────────────────────────────────── */
+.page-hero {
+    background:
+        radial-gradient(ellipse at 50% 100%, rgba(74,222,128,0.08) 0%, transparent 60%),
+        var(--clr-bg-dark);
+    border-bottom: var(--glass-border);
+    padding: var(--space-xl) 0;
+    margin-bottom: var(--space-xl);
+}
+.page-hero h1 { margin-bottom: var(--space-xs); }
+.page-hero p  { font-size: 1rem; }
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SECTION 17: Pagination
+   ───────────────────────────────────────────────────────────────────────────── */
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    justify-content: center;
+    margin-top: var(--space-xl);
+}
+.page-item a, .page-item span {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 38px; height: 38px;
+    border-radius: var(--radius-sm);
+    font-size: 0.88rem;
+    font-weight: 500;
+    border: 1px solid var(--clr-border);
+    color: var(--clr-text-muted);
+    transition: var(--transition-fast);
+}
+.page-item a:hover { border-color: var(--clr-primary); color: var(--clr-primary); background: rgba(74,222,128,0.06); }
+.page-item.active span { background: var(--clr-primary); color: #071407; border-color: var(--clr-primary); font-weight: 700; }
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SECTION 18: Utility / Misc
+   ───────────────────────────────────────────────────────────────────────────── */
+.divider { height: 1px; background: var(--clr-border); margin: var(--space-lg) 0; }
+
+.price-tag {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    color: var(--clr-primary);
+}
+.price-tag-large { font-size: 1.8rem; }
+
+.stock-indicator {
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.stock-in   { color: var(--clr-success); }
+.stock-low  { color: var(--clr-warning); }
+.stock-out  { color: var(--clr-danger); }
+
+/* Spinner for loading states */
+.spinner {
+    width: 20px; height: 20px;
+    border: 2px solid rgba(74,222,128,0.2);
+    border-top-color: var(--clr-primary);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Scroll to top of page after form submit (animate in) */
+.fade-in {
+    animation: fadeIn 0.4s ease both;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SECTION 19: Responsive Breakpoints
+   Obj 4 – Responsive UI on all screen sizes
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Tablet (≤ 900px) */
+@media (max-width: 900px) {
+    .auth-page { grid-template-columns: 1fr; }
+    .auth-hero { display: none; }         /* Hide decorative panel on small screens */
+    .auth-form-panel { padding: var(--space-xl) var(--space-lg); }
+    .auth-form-box { max-width: 100%; }
+
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Mobile (≤ 640px) */
+@media (max-width: 640px) {
+    :root { --navbar-h: 60px; }
+
+    .navbar-nav { display: none; flex-direction: column; position: fixed; inset: var(--navbar-h) 0 0 0; background: var(--clr-bg-dark); padding: var(--space-lg); gap: var(--space-sm); z-index: 999; }
+    .navbar-nav.open { display: flex; }
+    .nav-toggle { display: flex; }
+
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .footer-bottom { flex-direction: column; gap: var(--space-sm); text-align: center; }
+    .role-selector { grid-template-columns: 1fr; }
+    .auth-form-panel { padding: var(--space-lg) var(--space-md); }
+}
+
+/* Print styles for invoices and reports (Obj 5) */
+@media print {
+    .navbar, .site-footer, .btn, .no-print { display: none !important; }
+    body { background: white; color: black; }
+    .page-wrapper { padding-top: 0; }
+    .card { border: 1px solid #ccc; box-shadow: none; }
+}
+
+/* ==========================================================================
+   MULTI-IMAGE CAROUSEL
+   ========================================================================== */
+.carousel-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+.carousel-track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+.carousel-track::-webkit-scrollbar {
+    display: none;
+}
+
+.carousel-slide {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    position: relative;
+}
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.4);
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    transition: background 0.3s ease;
+}
+.carousel-btn:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+.carousel-btn.prev {
+    left: 8px;
+}
+.carousel-btn.next {
+    right: 8px;
+}
+.carousel-indicators {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    z-index: 2;
+}
+.carousel-indicators .indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transition: background 0.3s ease;
+}
+.carousel-indicators .indicator.active {
+    background: rgba(255, 255, 255, 1);
+}
