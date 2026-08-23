@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+  =============================================================================
+  PROJECT   : GreenThumb - Rubber Plant Nursery Web Application
+  FILE      : login.html
+  PURPOSE   : The user-facing login page. Presents a premium split-panel
+              layout where the left panel is decorative branding and the
+              right panel contains the secure login form.
+
+              This file ONLY handles the visual presentation. All
+              authentication logic (session creation, password verification,
+              role-based redirect) lives in login.php.
+
+  FORM ACTION : Submits POST data to login.php
+  OBJECTIVE   : Obj 4 – Responsive HTML/CSS UI; Obj 2 – Secure login gateway
+                that protects the ordering system; Obj 3 – Entry point for
+                farmer access to plant management.
+  =============================================================================
+-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO: Descriptive title for the login page -->
+    <title>Login – GreenThumb Rubber Plant Nursery</title>
+    <meta name="description" content="Log in to GreenThumb to browse our rubber plant catalog, track your orders, or manage your nursery inventory.">
+    <meta name="robots" content="noindex, nofollow"> <!-- Auth pages shouldn't be indexed -->
+
+    <!-- Global design system -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Page-specific inline styles (minimal — extends style.css) -->
+    <style>
+        /* Progress bar shown during form submission for UX feedback */
+        .submit-progress {
+            display: none;
+            height: 3px;
+            background: linear-gradient(90deg, var(--clr-primary), var(--clr-primary-dark));
+            border-radius: 3px;
+            margin-bottom: var(--space-md);
+            animation: progressBar 1.5s ease infinite;
+        }
+        @keyframes progressBar {
+            0%   { width: 0%; opacity: 1; }
+            70%  { width: 85%; opacity: 1; }
+            100% { width: 100%; opacity: 0; }
+        }
+
+        /* "Remember Me" checkbox custom style */
+        .check-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        .check-group input[type="checkbox"] {
+            width: 16px; height: 16px;
+            accent-color: var(--clr-primary);
+            cursor: pointer;
+        }
+        .check-group span {
+            font-size: 0.875rem;
+            color: var(--clr-text-muted);
+        }
+
+        /* Forgot password link */
+        .forgot-link {
+            font-size: 0.875rem;
+            color: var(--clr-text-muted);
+            transition: var(--transition-fast);
+        }
+        .forgot-link:hover { color: var(--clr-primary); }
+
+        /* Stats strip at the bottom of the hero panel */
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-md);
+            margin-top: var(--space-2xl);
+            padding-top: var(--space-xl);
+            border-top: 1px solid rgba(74,222,128,0.12);
+        }
+        .hero-stat-value {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--clr-primary);
+        }
+        .hero-stat-label {
+            font-size: 0.75rem;
+            color: var(--clr-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============================================================
+     AUTH PAGE: Split-panel layout
+     Left  → Decorative hero panel (branding + features)
+     Right → Login form panel
+     ============================================================ -->
+<main class="auth-page" role="main">
+
+    <!-- ═══════════════════════════════════════════════════════
+         LEFT PANEL: Hero / Branding
+         ═══════════════════════════════════════════════════════ -->
+    <section class="auth-hero" aria-hidden="true">
+        <div class="auth-hero-content">
+
+            <!-- Logo -->
+            <div class="auth-hero-logo">
+                <div class="logo-icon" aria-hidden="true">🌿</div>
+                <span class="logo-text">GreenThumb</span>
+            </div>
+
+            <!-- Headline -->
+            <h1 class="auth-hero-tagline">
+                Growing <span>Nature</span>,<br>
+                Nurturing Life
+            </h1>
+
+            <!-- Description -->
+            <p class="auth-hero-desc">
+                Sri Lanka's premier online rubber plant nursery. Browse rare cultivars,
+                manage your inventory, and track orders — all in one secure platform.
+            </p>
+
+            <!-- Feature highlights -->
+            <ul class="auth-features">
+                <li class="auth-feature-item">Real-time stock updates across all rubber plant varieties</li>
+                <li class="auth-feature-item">Secure online ordering with full shipping tracking</li>
+                <li class="auth-feature-item">Automated invoicing and income reports for farmers</li>
+                <li class="auth-feature-item">Role-based dashboards for farmers and customers</li>
+            </ul>
+
+            <!-- Quick stats -->
+            <div class="hero-stats">
+                <div>
+                    <div class="hero-stat-value">50+</div>
+                    <div class="hero-stat-label">Plant Varieties</div>
+                </div>
+                <div>
+                    <div class="hero-stat-value">500+</div>
+                    <div class="hero-stat-label">Happy Customers</div>
+                </div>
+                <div>
+                    <div class="hero-stat-value">100%</div>
+                    <div class="hero-stat-label">Secure Checkout</div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════════════
+         RIGHT PANEL: Login Form
+         ═══════════════════════════════════════════════════════ -->
+    <section class="auth-form-panel">
+        <div class="auth-form-box fade-in">
+
+            <!-- Form header -->
+            <h2 class="auth-form-title">Welcome back</h2>
+            <p class="auth-form-subtitle">
+                New to GreenThumb?
+                <a href="register.html">Create a new account →</a>
+            </p>
+
+            <!-- ──────────────────────────────────────────────
+                 FLASH MESSAGE AREA
+                 login.php redirects back here with ?error=...
+                 or ?success=... query params on failure/success.
+                 JavaScript below reads the param and shows the alert.
+                 ────────────────────────────────────────────── -->
+            <div id="flashMessage" role="alert" aria-live="polite"></div>
+
+            <!-- Progress bar (shown on submit) -->
+            <div class="submit-progress" id="submitProgress"></div>
+
+            <!-- ──────────────────────────────────────────────
+                 LOGIN FORM
+                 action="login.php" → processed by login.php
+                 method="POST"      → credentials NOT in URL
+                 autocomplete="on"  → allows browser password manager
+                 ────────────────────────────────────────────── -->
+              <form
+                id="loginForm"
+                action="login.php"
+                method="POST"
+                autocomplete="on"
+                novalidate>
+
+                <!-- CSRF token hidden field
+                     The actual token is set by login.php on page load when
+                     login.php renders this page (for now using hidden field).
+                     Future enhancement: serve this page via login.php to inject token. -->
+                <!-- <input type="hidden" name="csrf_token" value=""> -->
+
+                <!-- Email field -->
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        class="form-control"
+                        placeholder="you@example.com"
+                        autocomplete="email"
+                        required
+                        aria-required="true"
+                        aria-describedby="emailError">
+                    <span class="field-error" id="emailError" role="alert"></span>
+                </div>
+
+                <!-- Password field with show/hide toggle -->
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <div class="input-group">
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="form-control"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                            aria-required="true"
+                            aria-describedby="passwordError">
+                        <!-- Toggle password visibility (Obj 4 – UX) -->
+                        <button
+                            type="button"
+                            class="input-group-btn"
+                            id="togglePassword"
+                            aria-label="Show or hide password">
+                            👁️
+                        </button>
+                    </div>
+                    <span class="field-error" id="passwordError" role="alert"></span>
+                </div>
+
+                <!-- Remember me + Forgot password row -->
+                <div class="flex items-center justify-between" style="margin-bottom: var(--space-lg);">
+                    <label class="check-group">
+                        <input type="checkbox" id="remember" name="remember" value="1">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-link">Forgot password?</a>
+                </div>
+
+                <!-- Submit button -->
+                <button
+                    type="submit"
+                    id="loginSubmitBtn"
+                    class="btn btn-primary btn-full btn-lg">
+                    🔐 Sign In to GreenThumb
+                </button>
+
+            </form>
+
+            <!-- Divider -->
+            <div class="auth-divider"></div>
+
+            <!-- Footer note -->
+            <p style="text-align:center; font-size:0.8rem; color:var(--clr-text-muted);">
+                🔒 Your data is protected with bcrypt encryption and<br>
+                PHP prepared statements — no plain-text passwords stored.
+            </p>
+
+        </div>
+    </section>
+
+</main>
+
+
+<!-- =============================================================================
+     JAVASCRIPT: Client-side validation + UX enhancements
+     NOTE: Server-side validation in login.php is the SECURITY layer.
+           This JS is only for immediate user feedback (Obj 4 – UX).
+     ============================================================================= -->
+<script>
+'use strict';
+
+// ── Flash Message from URL Params ─────────────────────────────────────────────
+// login.php redirects back with ?error=message or ?success=message
+// We read those URL params here and display them in the #flashMessage div.
+(function showFlashFromUrl() {
+    const params  = new URLSearchParams(window.location.search);
+    const error   = params.get('error');
+    const success = params.get('success');
+    const flash   = document.getElementById('flashMessage');
+
+    if (error) {
+        flash.innerHTML = `
+            <div class="alert alert-error" role="alert">
+                ⚠️ ${decodeURIComponent(error)}
+            </div>`;
+        // Remove the query param from the URL so it doesn't persist on refresh
+        window.history.replaceState({}, '', window.location.pathname);
+    }
+
+    if (success) {
+        flash.innerHTML = `
+            <div class="alert alert-success" role="alert">
+                ✅ ${decodeURIComponent(success)}
+            </div>`;
+        window.history.replaceState({}, '', window.location.pathname);
+    }
+})();
+
+
+// ── Password Visibility Toggle ────────────────────────────────────────────────
+document.getElementById('togglePassword').addEventListener('click', function () {
+    const pwInput = document.getElementById('password');
+    const isHidden = pwInput.type === 'password';
+    pwInput.type = isHidden ? 'text' : 'password';
+    this.textContent = isHidden ? '🙈' : '👁️';
+    this.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+});
+
+
+// ── Client-Side Form Validation (UX layer) ────────────────────────────────────
+// Real security validation happens server-side in login.php.
+// This only provides instant feedback to the user before the form submits.
+document.getElementById('loginForm').addEventListener('submit', function (e) {
+    let isValid = true;
+
+    // Clear previous errors
+    document.getElementById('emailError').textContent    = '';
+    document.getElementById('passwordError').textContent = '';
+    document.querySelectorAll('.form-control').forEach(el => el.classList.remove('is-invalid'));
+
+    // Validate email
+    const email = document.getElementById('email').value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+        showFieldError('email', 'emailError', 'Email address is required.');
+        isValid = false;
+    } else if (!emailRegex.test(email)) {
+        showFieldError('email', 'emailError', 'Please enter a valid email address.');
+        isValid = false;
+    }
+
+    // Validate password (just non-empty — actual check is server-side)
+    const password = document.getElementById('password').value;
+    if (!password) {
+        showFieldError('password', 'passwordError', 'Password is required.');
+        isValid = false;
+    }
+
+    if (!isValid) {
+        e.preventDefault(); // Stop submission if client validation fails
+        return;
+    }
+
+    // Show progress bar and disable button to prevent double-submit
+    document.getElementById('submitProgress').style.display = 'block';
+    const btn = document.getElementById('loginSubmitBtn');
+    btn.textContent = '⏳ Signing in…';
+    btn.disabled = true;
+    btn.classList.add('loading');
+});
+
+// Helper: marks a field as invalid and shows its error message
+function showFieldError(inputId, errorId, message) {
+    document.getElementById(inputId).classList.add('is-invalid');
+    document.getElementById(errorId).textContent = message;
+}
+</script>
+
+</body>
+</html>

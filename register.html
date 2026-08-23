@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+  =============================================================================
+  PROJECT   : GreenThumb - Rubber Plant Nursery Web Application
+  FILE      : register.html
+  PURPOSE   : New user registration page. Supports sign-up for both
+              'Farmer' and 'Customer' roles via an interactive role-selector UI.
+
+              This file handles ONLY the visual presentation.
+              All validation, duplicate-email checks, and database inserts
+              are handled securely in register.php using prepared statements.
+
+  FORM ACTION : Submits POST data to register.php
+  OBJECTIVE   : Obj 2 – Safe capture of customer details for ordering
+                Obj 3 – Allow new farmers to register and manage plants
+                Obj 4 – Responsive, validated HTML/CSS form
+  =============================================================================
+-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account – GreenThumb Rubber Plant Nursery</title>
+    <meta name="description" content="Join GreenThumb as a customer to order premium rubber plants, or as a farmer to manage your nursery inventory.">
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Global design system -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        /* Password strength indicator (UX enhancement for Obj 4) */
+        .strength-bar-wrap {
+            height: 4px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        .strength-bar {
+            height: 100%;
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.4s ease, background 0.4s ease;
+        }
+        .strength-label {
+            font-size: 0.72rem;
+            margin-top: 4px;
+            font-weight: 600;
+            color: var(--clr-text-muted);
+        }
+        .strength-weak   { background: var(--clr-danger);  width: 30%; }
+        .strength-fair   { background: var(--clr-warning); width: 60%; }
+        .strength-strong { background: var(--clr-success); width: 100%; }
+
+        /* Privacy note at bottom of form */
+        .privacy-note {
+            font-size: 0.78rem;
+            color: var(--clr-text-muted);
+            text-align: center;
+            margin-top: var(--space-md);
+            line-height: 1.6;
+        }
+
+        /* Two-column grid for some fields (name + phone) */
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-md);
+        }
+        @media (max-width: 480px) { .form-row-2 { grid-template-columns: 1fr; } }
+
+        /* Scrollable form panel for taller registration form */
+        .auth-form-panel { align-items: flex-start; padding-top: 40px; }
+        .auth-form-box { padding-bottom: 40px; }
+    </style>
+</head>
+<body>
+
+<!-- ============================================================
+     AUTH PAGE: Split-panel layout (mirrors login.html structure)
+     ============================================================ -->
+<main class="auth-page" role="main">
+
+    <!-- ═══════════════════════════════════════════════════════
+         LEFT PANEL: Hero / Branding
+         ═══════════════════════════════════════════════════════ -->
+    <section class="auth-hero" aria-hidden="true">
+        <div class="auth-hero-content">
+
+            <div class="auth-hero-logo">
+                <div class="logo-icon">🌿</div>
+                <span class="logo-text">GreenThumb</span>
+            </div>
+
+            <h1 class="auth-hero-tagline">
+                Join Our<br>
+                Growing <span>Community</span>
+            </h1>
+
+            <p class="auth-hero-desc">
+                Whether you're a plant lover looking for the perfect rubber plant,
+                or a nursery farmer managing your inventory — GreenThumb has a
+                role tailored for you.
+            </p>
+
+            <ul class="auth-features">
+                <li class="auth-feature-item">
+                    <strong>Customers:</strong> Browse catalog, place orders, track deliveries
+                </li>
+                <li class="auth-feature-item">
+                    <strong>Farmers:</strong> Add plants, manage stock, view income reports
+                </li>
+                <li class="auth-feature-item">Printable invoices generated automatically</li>
+                <li class="auth-feature-item">Bank-grade security — bcrypt hashed passwords</li>
+            </ul>
+
+            <!-- Role info cards -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-md);margin-top:var(--space-2xl);">
+                <div style="padding:var(--space-md);border:1px solid rgba(74,222,128,0.15);border-radius:var(--radius-md);">
+                    <div style="font-size:1.8rem;margin-bottom:8px;">🌾</div>
+                    <div style="font-family:var(--font-heading);font-weight:700;color:var(--clr-primary);margin-bottom:4px;">Farmer</div>
+                    <div style="font-size:0.78rem;color:var(--clr-text-muted);">Full plant & inventory management</div>
+                </div>
+                <div style="padding:var(--space-md);border:1px solid rgba(74,222,128,0.15);border-radius:var(--radius-md);">
+                    <div style="font-size:1.8rem;margin-bottom:8px;">🛍️</div>
+                    <div style="font-family:var(--font-heading);font-weight:700;color:var(--clr-primary);margin-bottom:4px;">Customer</div>
+                    <div style="font-size:0.78rem;color:var(--clr-text-muted);">Browse, order, and track plants</div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════════════
+         RIGHT PANEL: Registration Form
+         ═══════════════════════════════════════════════════════ -->
+    <section class="auth-form-panel">
+        <div class="auth-form-box fade-in">
+
+            <!-- Form header -->
+            <h2 class="auth-form-title">Create your account</h2>
+            <p class="auth-form-subtitle">
+                Already have an account?
+                <a href="login.html">Sign in here →</a>
+            </p>
+
+            <!-- Flash message area (populated by JS reading URL params from register.php) -->
+            <div id="flashMessage" role="alert" aria-live="polite"></div>
+
+            <!-- ──────────────────────────────────────────────
+                 STEP 1: Role Selector
+                 The user must choose Farmer or Customer first.
+                 This value is sent as POST 'role' to register.php
+                 where it's validated against the ENUM in the DB.
+                 ────────────────────────────────────────────── -->
+            <div style="margin-bottom:var(--space-md);">
+                <label class="form-label">I am joining as a…</label>
+            </div>
+            <div class="role-selector">
+                <!-- Customer option (default selected) -->
+                <input
+                    type="radio"
+                    name="role_display"
+                    id="roleCustomer"
+                    value="customer"
+                    class="role-option"
+                    checked>
+                <label class="role-label" for="roleCustomer">
+                    <span class="role-icon">🛍️</span>
+                    Customer
+                    <span style="font-size:0.72rem;font-weight:400;color:var(--clr-text-muted);">Browse & order plants</span>
+                </label>
+
+                <!-- Farmer option -->
+                <input
+                    type="radio"
+                    name="role_display"
+                    id="roleFarmer"
+                    value="farmer"
+                    class="role-option">
+                <label class="role-label" for="roleFarmer">
+                    <span class="role-icon">🌾</span>
+                    Farmer
+                    <span style="font-size:0.72rem;font-weight:400;color:var(--clr-text-muted);">Manage nursery inventory</span>
+                </label>
+            </div>
+
+            <!-- ──────────────────────────────────────────────
+                 REGISTRATION FORM
+                 action="register.php" → processed server-side
+                 method="POST"         → credentials not in URL
+                 ────────────────────────────────────────────── -->
+            <form
+                id="registerForm"
+                action="register.php"
+                method="POST"
+                autocomplete="on"
+                novalidate>
+
+                <!-- Hidden role field — synced with radio buttons above via JS -->
+                <!-- register.php reads $_POST['role'] and validates it -->
+                <input type="hidden" name="role" id="roleHidden" value="customer">
+
+                <!-- Full Name + Phone (2-column row) -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label class="form-label" for="full_name">Full Name</label>
+                        <input
+                            type="text"
+                            id="full_name"
+                            name="full_name"
+                            class="form-control"
+                            placeholder="Ahmad Bin Ali"
+                            autocomplete="name"
+                            maxlength="120"
+                            required
+                            aria-required="true"
+                            aria-describedby="nameError">
+                        <span class="field-error" id="nameError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="phone">Phone Number</label>
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            class="form-control"
+                            placeholder="+94 77 123 4567"
+                            autocomplete="tel"
+                            maxlength="20"
+                            aria-describedby="phoneError">
+                        <span class="field-error" id="phoneError"></span>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        class="form-control"
+                        placeholder="you@example.com"
+                        autocomplete="email"
+                        maxlength="180"
+                        required
+                        aria-required="true"
+                        aria-describedby="emailError">
+                    <span class="field-error" id="emailError"></span>
+                </div>
+
+                <!-- Address (for customer shipping pre-fill — Obj 2) -->
+                <div class="form-group">
+                    <label class="form-label" for="address">
+                        Address
+                        <span style="font-weight:400;text-transform:none;font-size:0.72rem;color:var(--clr-text-muted);">
+                            (used as default shipping address)
+                        </span>
+                    </label>
+                    <textarea
+                        id="address"
+                        name="address"
+                        class="form-control"
+                        rows="2"
+                        placeholder="Nursery Lane, Awissawella"
+                        autocomplete="street-address"
+                        maxlength="500"
+                        style="min-height:70px;"
+                        aria-describedby="addressError"></textarea>
+                    <span class="field-error" id="addressError"></span>
+                </div>
+
+                <!-- Password with strength indicator -->
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <div class="input-group">
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="form-control"
+                            placeholder="Minimum 8 characters"
+                            autocomplete="new-password"
+                            maxlength="255"
+                            required
+                            aria-required="true"
+                            aria-describedby="passwordStrength passwordError">
+                        <button type="button" class="input-group-btn" id="togglePw" aria-label="Toggle password visibility">👁️</button>
+                    </div>
+                    <!-- Password strength bar (Obj 4 – UX) -->
+                    <div class="strength-bar-wrap"><div class="strength-bar" id="strengthBar"></div></div>
+                    <div class="strength-label" id="passwordStrength"></div>
+                    <span class="field-error" id="passwordError"></span>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="form-group">
+                    <label class="form-label" for="confirm_password">Confirm Password</label>
+                    <div class="input-group">
+                        <input
+                            type="password"
+                            id="confirm_password"
+                            name="confirm_password"
+                            class="form-control"
+                            placeholder="Re-enter your password"
+                            autocomplete="new-password"
+                            maxlength="255"
+                            required
+                            aria-required="true"
+                            aria-describedby="confirmError">
+                        <button type="button" class="input-group-btn" id="toggleConfirm" aria-label="Toggle confirm password visibility">👁️</button>
+                    </div>
+                    <span class="field-error" id="confirmError"></span>
+                </div>
+
+                <!-- Terms agreement -->
+                <div class="form-group" style="margin-bottom:var(--space-lg);">
+                    <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;">
+                        <input
+                            type="checkbox"
+                            id="terms"
+                            name="terms"
+                            value="1"
+                            style="margin-top:3px;width:16px;height:16px;accent-color:var(--clr-primary);flex-shrink:0;"
+                            required>
+                        <span style="font-size:0.85rem;color:var(--clr-text-muted);">
+                            I agree to the <a href="#" style="color:var(--clr-primary);">Terms of Service</a>
+                            and <a href="#" style="color:var(--clr-primary);">Privacy Policy</a>.
+                            My password will be stored as a secure bcrypt hash.
+                        </span>
+                    </label>
+                    <span class="field-error" id="termsError"></span>
+                </div>
+
+                <!-- Submit button -->
+                <button type="submit" id="registerBtn" class="btn btn-primary btn-full btn-lg">
+                    🌱 Create My GreenThumb Account
+                </button>
+
+            </form>
+
+            <!-- Privacy note -->
+            <p class="privacy-note">
+                🔒 GreenThumb uses PHP prepared statements and bcrypt encryption.<br>
+                Your personal data is never shared with third parties.
+            </p>
+
+        </div>
+    </section>
+
+</main>
+
+
+<!-- =============================================================================
+     JAVASCRIPT: Role sync + validation + password strength
+     ============================================================================= -->
+<script>
+'use strict';
+
+// ── Flash Messages from URL params ────────────────────────────────────────────
+(function () {
+    const params = new URLSearchParams(window.location.search);
+    const error  = params.get('error');
+    const flash  = document.getElementById('flashMessage');
+
+    // Pre-fill email if register.php sends it back (after failed submission)
+    const email = params.get('email');
+    if (email) document.getElementById('email').value = decodeURIComponent(email);
+
+    if (error) {
+        flash.innerHTML = `<div class="alert alert-error">⚠️ ${decodeURIComponent(error)}</div>`;
+        window.history.replaceState({}, '', window.location.pathname);
+    }
+})();
+
+
+// ── Sync Role Radio Buttons → Hidden Input ────────────────────────────────────
+// The radio buttons are visually styled cards; the actual value submitted to
+// register.php is the hidden input #roleHidden.
+document.querySelectorAll('input[name="role_display"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+        document.getElementById('roleHidden').value = radio.value;
+    });
+});
+
+
+// ── Password Visibility Toggles ───────────────────────────────────────────────
+function setupToggle(btnId, inputId) {
+    document.getElementById(btnId).addEventListener('click', function () {
+        const input = document.getElementById(inputId);
+        const isHidden = input.type === 'password';
+        input.type = isHidden ? 'text' : 'password';
+        this.textContent = isHidden ? '🙈' : '👁️';
+    });
+}
+setupToggle('togglePw',      'password');
+setupToggle('toggleConfirm', 'confirm_password');
+
+
+// ── Password Strength Indicator ───────────────────────────────────────────────
+// Provides real-time feedback so users choose a strong password (Obj 4 – UX).
+document.getElementById('password').addEventListener('input', function () {
+    const pw  = this.value;
+    const bar = document.getElementById('strengthBar');
+    const lbl = document.getElementById('passwordStrength');
+
+    if (!pw) { bar.className = 'strength-bar'; bar.style.width = '0%'; lbl.textContent = ''; return; }
+
+    let score = 0;
+    if (pw.length >= 8)              score++;
+    if (/[A-Z]/.test(pw))           score++;
+    if (/[0-9]/.test(pw))           score++;
+    if (/[^A-Za-z0-9]/.test(pw))   score++;
+
+    if (score <= 1)      { bar.className = 'strength-bar strength-weak';   lbl.textContent = '⚡ Weak — add uppercase letters, numbers, or symbols'; lbl.style.color = 'var(--clr-danger)'; }
+    else if (score <= 2) { bar.className = 'strength-bar strength-fair';   lbl.textContent = '👍 Fair — getting stronger'; lbl.style.color = 'var(--clr-warning)'; }
+    else                 { bar.className = 'strength-bar strength-strong'; lbl.textContent = '✅ Strong password'; lbl.style.color = 'var(--clr-success)'; }
+});
+
+
+// ── Client-Side Form Validation ───────────────────────────────────────────────
+// This is a UX convenience layer. The authoritative validation is in register.php.
+document.getElementById('registerForm').addEventListener('submit', function (e) {
+    let isValid = true;
+
+    // Clear previous errors
+    ['nameError','phoneError','emailError','addressError','passwordError','confirmError','termsError']
+        .forEach(id => { const el = document.getElementById(id); if (el) el.textContent = ''; });
+    document.querySelectorAll('.form-control').forEach(el => el.classList.remove('is-invalid'));
+
+    // Full name
+    const name = document.getElementById('full_name').value.trim();
+    if (!name) { showErr('full_name','nameError','Full name is required.'); isValid = false; }
+    else if (name.length < 2) { showErr('full_name','nameError','Name must be at least 2 characters.'); isValid = false; }
+
+    // Email
+    const email = document.getElementById('email').value.trim();
+    if (!email) { showErr('email','emailError','Email address is required.'); isValid = false; }
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showErr('email','emailError','Please enter a valid email address.'); isValid = false; }
+
+    // Password
+    const pw  = document.getElementById('password').value;
+    const cpw = document.getElementById('confirm_password').value;
+    if (!pw) { showErr('password','passwordError','Password is required.'); isValid = false; }
+    else if (pw.length < 8) { showErr('password','passwordError','Password must be at least 8 characters.'); isValid = false; }
+    else if (pw !== cpw) { showErr('confirm_password','confirmError','Passwords do not match.'); isValid = false; }
+
+    // Terms
+    if (!document.getElementById('terms').checked) {
+        document.getElementById('termsError').textContent = 'You must agree to the Terms of Service.';
+        isValid = false;
+    }
+
+    if (!isValid) { e.preventDefault(); return; }
+
+    // Disable button to prevent double submit
+    const btn = document.getElementById('registerBtn');
+    btn.textContent = '⏳ Creating account…';
+    btn.disabled = true;
+});
+
+function showErr(inputId, errorId, msg) {
+    const el = document.getElementById(inputId);
+    if (el) el.classList.add('is-invalid');
+    const err = document.getElementById(errorId);
+    if (err) err.textContent = msg;
+}
+</script>
+
+</body>
+</html>
