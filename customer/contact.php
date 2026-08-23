@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql = "INSERT INTO inquiries (name, email, subject, message) VALUES ('$name', '$email', '$subject', '$message')";
     
     if (mysqli_query($conn, $sql)) {
-        $message_status = "<div style='color:green;'>ඔබගේ පණිවිඩය සාර්ථකව යොමු කෙරුණි!</div>";
+        $message_status = "<div style='color:green;'>Your message has been sent successfully!</div>";
     } else {
         $message_status = "<div style='color:red;'>Error: " . mysqli_error($conn) . "</div>";
     }
