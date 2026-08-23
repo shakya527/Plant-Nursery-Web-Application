@@ -20,21 +20,21 @@ if (!isset($_GET['id'])) {
 
 $plant_id = (int)$_GET['id'];
 
-// ── 1. SINGLE IMAGE DELETE LOGIC (තනි පින්තූරයක් පමණක් අයින් කිරීම) ──
+// ── 1. SINGLE IMAGE DELETE LOGIC (Remove a single image only) ──
 if (isset($_GET['delete_img_id'])) {
     $img_id = (int)$_GET['delete_img_id'];
     
-    // පින්තූරයේ path එක මුලින්ම හොයාගන්නවා
+    // First find the image path
     $img_res = $conn->query("SELECT image_path FROM plant_images WHERE id = $img_id AND plant_id = $plant_id");
     if ($img_row = $img_res->fetch_assoc()) {
         $full_path = __DIR__ . '/../uploads/' . $img_row['image_path'];
         
-        // ෆෝල්ඩර් එකෙන් ෆයිල් එක මකනවා
+        // Delete the file from the folder
         if (file_exists($full_path)) {
             @unlink($full_path);
         }
         
-        // ඩේටාබේස් එකෙන් රෙකෝඩ් එක විතරක් මකනවා
+      // Delete only the record from the database
         $conn->query("DELETE FROM plant_images WHERE id = $img_id");
         
         echo "<script>alert('පින්තූරය සාර්ථකව ඉවත් කරන ලදී!'); window.location='edit_plant.php?id=$plant_id';</script>";
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_plant'])) {
     $stmt->bind_param("ssiddsi", $plant_name, $scientific_name, $category_id, $price, $stock_quantity, $description, $plant_id);
     
     if ($stmt->execute()) {
-        // අලුතින් තව පින්තූර එකතු කරලා තියෙනවා නම් ඒවා සේව් කිරීම
+       // Saving newly added images if available
         if (!empty($_FILES['images']['name'][0])) {
             foreach ($_FILES['images']['tmp_name'] as $key => $tmp_name) {
                 if ($_FILES['images']['error'][$key] === UPLOAD_ERR_OK) {
@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_plant'])) {
     }
 }
 
-// පැළයේ වර්තමාන දත්ත ලබාගැනීම
+// Fetching current plant data
 $plant_res = $conn->query("SELECT * FROM plants WHERE plant_id = $plant_id");
 $plant = $plant_res->fetch_assoc();
 
