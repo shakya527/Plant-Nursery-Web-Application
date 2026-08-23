@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_id'])) {
     $order_id = (int)$_POST['order_id'];
     $customer_id = (int)$_SESSION['user_id'];
 
-    // 🚨 o.order_status ලෙස නිවැරදි කර ඇත
+   // 🚨 Corrected to o.order_status
     $order = db_query_one(
         "SELECT order_id, order_status FROM orders WHERE order_id = ? AND customer_id = ?",
         "ii",
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_id'])) {
             db_query("DELETE FROM orders WHERE order_id = ?", "i", [$order_id]);
 
             $conn->commit();
-            echo "<script>alert('ඇණවුම සාර්ථකව අවලංගු කරන ලදී!'); window.location='my_orders.php';</script>";
+            echo "<script>alert('Order cancelled successfully!'); window.location='my_orders.php';</script>";
             exit;
 
         } catch (Exception $e) {
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_id'])) {
             exit;
         }
     } else {
-        echo "<script>alert('මෙම ඇණවුම අවලංගු කළ නොහැක.'); window.location='my_orders.php';</script>";
+        echo "<script>alert('This order cannot be cancelled.'); window.location='my_orders.php';</script>";
         exit;
     }
 } else {
