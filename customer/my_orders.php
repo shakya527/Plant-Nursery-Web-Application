@@ -85,7 +85,7 @@ require_once __DIR__ . '/../components/header.php';
                                     </a>
 
                                     <?php if (strtolower($order['order_status']) === 'pending'): ?>
-                                        <form action="cancel_order.php" method="POST" onsubmit="return confirm('ඔබට සැබවින්ම මෙම ඇණවුම අවලංගු කිරීමට අවශ්‍යද?');" style="margin: 0; display: inline-block;">
+                                        <form action="cancel_order.php" method="POST" onsubmit="return confirm('Are you sure you want to cancel this order?');" style="margin: 0; display: inline-block;">
                                             <input type="hidden" name="order_id" value="<?= $order['order_id'] ?>">
                                             <button type="submit" style="background: #ef5350; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold; transition: background 0.2s;" onmouseover="this.style.background='#c62828'" onmouseout="this.style.background='#ef5350'">
                                                 🗑️ Cancel
