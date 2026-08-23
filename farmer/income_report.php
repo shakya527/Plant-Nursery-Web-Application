@@ -19,7 +19,7 @@ $farmer_id = (int) $_SESSION['user_id'];
 
 // ── Aggregate Data (Obj 5) ───────────────────────────────────────────────────
 
-// [FIXED] created_by NULL ගැටලුව මඟහැර සහ 'pending' ඕඩර්ස් ද ඇතුළත් කර සමස්ත ආදායම ගණනය කිරීම.
+// [FIXED] Avoided created_by NULL issue and included 'pending' orders to calculate total revenue.
 $revenue_data = db_query_one(
     "SELECT COALESCE(SUM(oi.line_total), 0) as total_revenue, 
             COUNT(DISTINCT oi.plant_id) as plants_sold, 
@@ -30,7 +30,7 @@ $revenue_data = db_query_one(
      WHERE o.order_status IN ('pending', 'confirmed', 'shipped', 'delivered')"
 );
 
-// [FIXED] වැඩිම අලෙවියක් ඇති පැල ලැයිස්තුව සඳහා ද SQL Query එක නිවැරදි කර ඇත.
+// [FIXED] Corrected SQL query for the top selling plants list.
 $top_plants = db_query(
     "SELECT p.plant_name, SUM(oi.quantity) as qty_sold, SUM(oi.line_total) as revenue 
      FROM order_items oi
