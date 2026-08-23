@@ -1,6 +1,6 @@
 # 🪴 Plant Nursery Web Application
 
-A modern, responsive, and secure web application built using PHP, MySQLi, and Bootstrap/CSS. This project provides plant nursery owners and admins with a streamline operations, inventory management, and customer ordering portal.
+A modern, responsive, and secure web application built using PHP, MySQLi, and Bootstrap/CSS. This project provides plant nursery owners and admins with a streamlined operations, inventory management, and customer ordering portal.
 
 ## 📝 Project Description
 Plant Nursery Web Application provides a complete digital solution for managing nursery inventory, updating plant status, handling customer shopping carts, and processing orders efficiently through an intuitive dashboard and user interface.
@@ -12,11 +12,13 @@ Plant Nursery Web Application provides a complete digital solution for managing 
 - 📊 **Interactive Dashboard:** Overview of total stock, orders, and sales performance.
 - 🗑️ **Safe Record Handling:** Validation checks for data integrity and error prevention.
 
-## 🛠️ Tech Stack
-- **Frontend:** HTML5, CSS3, JavaScript (ES6+), Bootstrap
-- **Backend:** Native PHP 8.0+
-- **Database:** MySQL 5.7+ / MariaDB 10.4+
-- **Development Environment:** XAMPP, VS Code
+## 🛠️ Technology Stack
+| Category | Technologies Used |
+| :--- | :--- |
+| **Frontend** | HTML5, CSS3, JavaScript (ES6+), Bootstrap 5 |
+| **Backend** | Native PHP 8.0+ (Procedural / Object-Oriented) |
+| **Database** | MySQL 5.7+ / MariaDB 10.4+ (InnoDB, UTF-8) |
+| **Development Tools** | XAMPP, Visual Studio Code, Git, GitHub |
 
 ## 💻 System Requirements
 - **Web Server:** Apache (via XAMPP, WAMP, or LAMP)
