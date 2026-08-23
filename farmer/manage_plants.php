@@ -16,14 +16,14 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'farmer') {
 $farmer_name = htmlspecialchars($_SESSION['full_name']);
 $action = $_GET['action'] ?? 'view';
 
-// ── 1. DELETE LOGIC (පැළයක් සහ පින්තූර ඉවත් කිරීම) ─────────────────────────────
+// ── 1. DELETE LOGIC (Deleting a plant and images) ─────────────────────────────
 if ($action === 'delete' && isset($_GET['id'])) {
     $plant_id = (int)$_GET['id'];
     
-    // ෆෝල්ඩර් එකෙන් පින්තූර file එක ඩිලීට් කරන්න
+    // Delete the image file from the folder
     $img_res = $conn->query("SELECT image_path FROM plant_images WHERE plant_id = $plant_id");
     while ($img = $img_res->fetch_assoc()) {
-        // Database එකේ සේව් වෙලා තියෙන්නේ 'plants/filename.jpg' නිසා uploads/ එකට path එක හදනවා
+       // Since 'plants/filename.jpg' is saved in the Database, construct the path to uploads/
         $full_path = __DIR__ . '/../uploads/' . $img['image_path'];
         if (file_exists($full_path)) {
             @unlink($full_path);
@@ -36,7 +36,7 @@ if ($action === 'delete' && isset($_GET['id'])) {
     exit;
 }
 
-// ── 2. INSERT LOGIC (අලුත් පැළයක් සහ පින්තූර ඇතුළත් කිරීම) ───────────────────────
+// ── 2. INSERT LOGIC (Inserting a new plant and images) ───────────────────────
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_plant'])) {
     $plant_name = $_POST['plant_name'];
     $scientific_name = $_POST['scientific_name'] ?? '';
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_plant'])) {
                 if ($_FILES['images']['error'][$key] === UPLOAD_ERR_OK) {
                     $file_name = time() . '_' . basename($_FILES['images']['name'][$key]);
                     
-                    // ෆයිල් එක ඇත්තටම සේව් වෙන්නේ htdocs/Rudder_plant/uploads/plants/ ෆෝල්ඩර් එකටයි
+                   // File is actually saved to the htdocs/Rudder_plant/uploads/plants/ folder
                     $target_dir = __DIR__ . "/../uploads/plants/" . $file_name;
                     
                     if (!is_dir(__DIR__ . "/../uploads/plants/")) {
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_plant'])) {
                         $img_query = "INSERT INTO plant_images (plant_id, image_path) VALUES (?, ?)";
                         $img_stmt = $conn->prepare($img_query);
                         
-                        // 🌟 Shop Catalog එකට ගැලපෙන්න ඩේටාබේස් එකට සේව් කරන්නේ 'plants/නම.jpg' විදිහටයි!
+                       // 🌟 Save as 'plants/filename.jpg' to the database to match the Shop Catalog!
                         $img_path = "plants/" . $file_name;
                         
                         $img_stmt->bind_param("is", $plant_id, $img_path);
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_plant'])) {
                 }
             }
         }
-        echo "<script>alert('පැළය සාර්ථකව ඇතුළත් කරගන්නා ලදී!'); window.location='manage_plants.php?action=view';</script>";
+        echo "<script>alert('Plant inserted successfully!'); window.location='manage_plants.php?action=view';</script>";
         exit;
     }
 }
@@ -122,7 +122,7 @@ require_once __DIR__ . '/../components/header.php';
                             <!-- 📷 Image Display Fix -->
                             <td style="padding: 12px;">
                                 <?php if ($img_row && !empty($img_row['image_path'])): ?>
-                                    <!-- Database එකේ තියෙන plants/ කෑල්ලට ඉස්සරහින් ../uploads/ එකතු කරලා රූපය පෙන්වයි -->
+                                   
                                     <img src="../uploads/<?= htmlspecialchars($img_row['image_path']) ?>" alt="Plant Image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #ccc; display: block;">
                                 <?php else: ?>
                                     <div style="width: 60px; height: 60px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border-radius: 4px; color: #bbb; border: 1px solid #eee;">🌿</div>
@@ -145,7 +145,7 @@ require_once __DIR__ . '/../components/header.php';
                                     <a href="edit_plant.php?id=<?= $pid ?>" style="background: #ffa000; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 0.85rem; font-weight: bold; display: inline-block;">
                                         ✏️ Edit
                                     </a>
-                                    <a href="manage_plants.php?action=delete&id=<?= $pid ?>" onclick="return confirm('මෙම පැළය සම්පූර්ණයෙන්ම ඉවත් කිරීමට අවශ්‍යද?');" style="background: #d32f2f; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 0.85rem; font-weight: bold; display: inline-block;">
+                                    <a href="manage_plants.php?action=delete&id=<?= $pid ?>" onclick="return confirm('Plant inserted successfully!'); style="background: #d32f2f; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 0.85rem; font-weight: bold; display: inline-block;">
                                         🗑️ Delete
                                     </a>
                                 </div>
@@ -156,7 +156,7 @@ require_once __DIR__ . '/../components/header.php';
                     else:
                     ?>
                         <tr>
-                            <td colspan="6" style="padding: 20px; text-align: center; color: #999;">තාම කිසිම පැළයක් ඇතුළත් කර නැත.</td>
+                            <td colspan="6" style="padding: 20px; text-align: center; color: #999;"></td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
