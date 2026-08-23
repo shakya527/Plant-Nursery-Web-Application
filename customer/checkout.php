@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     [$order_id, $item['plant_id'], $item['plant_name'], $item['cart_qty'], $item['price_per_unit'], $item['line_total']]
                 );
 
-                // ස්ටොක් ප්‍රමාණය සාර්ථකව අඩු කිරීම මෙතැනින් සිදු වේ
+               // Stock quantity is successfully deducted here
                 db_query(
                     "UPDATE plants SET stock_quantity = stock_quantity - ? WHERE plant_id = ?",
                     "ii",
