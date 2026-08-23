@@ -2,7 +2,6 @@
 session_start();
 require_once '../config/db.php';
 
-// Payment record එකක් manually දාන්න හෝ Status මාරු කරන්න
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_payment'])) {
     $order_id = intval($_POST['order_id']);
     $method = mysqli_real_escape_string($conn, $_POST['payment_method']);
