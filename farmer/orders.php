@@ -32,7 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 }
 
 // ── Fetch Orders ─────────────────────────────────────────────────────────────
-// [FIXED] created_by NULL ගැටලුව මඟහැර සියලුම ඕඩර්ස් Farmer ට පෙන්වීමට සකස් කර ඇත.
 $sql = "SELECT o.order_id, o.shipping_name, o.shipping_city, o.order_status, o.total_amount, o.created_at, COUNT(oi.item_id) as items_count 
         FROM orders o 
         JOIN order_items oi ON o.order_id = oi.order_id
